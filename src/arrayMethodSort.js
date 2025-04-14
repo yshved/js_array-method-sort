@@ -22,15 +22,58 @@ function applyCustomSort() {
 
     const comparer = compareFunction || defaultCompare;
 
-    for (let i = 0; i < this.length; i++) {
-      for (let j = 0; j < this.length - 1 - i; j++) {
-        if (comparer(this[j], this[j + 1]) > 0) {
-          const temp = this[j];
+    const mergeSort = (arr) => {
+      if (arr.length <= 1) {
+        return arr;
+      }
 
-          this[j] = this[j + 1];
-          this[j + 1] = temp;
+      const middle = Math.floor(arr.length / 2);
+      const left = [];
+      const right = [];
+
+      for (let i = 0; i < middle; i++) {
+        left[left.length] = arr[i];
+      }
+
+      for (let i = middle; i < arr.length; i++) {
+        right[right.length] = arr[i];
+      }
+
+      return merge(mergeSort(left), mergeSort(right));
+    };
+
+    const merge = (left, right) => {
+      const result = [];
+      let i = 0;
+      let j = 0;
+
+      while (i < left.length && j < right.length) {
+        if (comparer(left[i], right[j]) <= 0) {
+          result[result.length] = left[i];
+          i++;
+        } else {
+          result[result.length] = right[j];
+          j++;
         }
       }
+
+      while (i < left.length) {
+        result[result.length] = left[i];
+        i++;
+      }
+
+      while (j < right.length) {
+        result[result.length] = right[j];
+        j++;
+      }
+
+      return result;
+    };
+
+    const sorted = mergeSort(this);
+
+    for (let i = 0; i < sorted.length; i++) {
+      this[i] = sorted[i];
     }
 
     return this;
